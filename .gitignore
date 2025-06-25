@@ -1,0 +1,85 @@
+# Xcode
+DerivedData/
+*.xcworkspace
+!default.xcworkspace
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# SwiftPM
+.build/
+Packages/
+.swiftpm/
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Firebase
+GoogleService-Info.plist
+
+# Other Build Artifacts
+*.o
+*.d
+*.out
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.hmap
+*.ipa
+*.app.dSYM.zip
+*.app.dSYM
+
+# User-specific Xcode settings
+*.pbxuser
+*.mode1
+*.mode2
+*.perspective
+
+# Simulator logs and device data
+.DSYM/
+*.dSYM
+*.crash
+*.xccrashlog
+*.xcactivitylog
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Preview files
+*.preview-thumbnails
+
+# Swift Package Manager Xcode project
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
+
+# Archive
+*.xcarchive
+
+# Tuist
+/.tuist-cache/
+
+# Xcode Cloud
+.xcresult/
+
+# IDE
+.idea/
+*.iml
+
+# SPM Artifacts
+Artifacts/
+
+# XCTest logs
+TestLogs/
