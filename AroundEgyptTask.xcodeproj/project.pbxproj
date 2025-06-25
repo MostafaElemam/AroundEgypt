@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5DEE65582E0C474100FFA6E2 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEE65572E0C474100FFA6E2 /* Alamofire */; };
+		5DEE66B92E0C4D5900FFA6E2 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 5DEE66B82E0C4D5900FFA6E2 /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DEE65582E0C474100FFA6E2 /* Alamofire in Frameworks */,
+				5DEE66B92E0C4D5900FFA6E2 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +130,7 @@
 			);
 			name = AroundEgyptTask;
 			packageProductDependencies = (
-				5DEE65572E0C474100FFA6E2 /* Alamofire */,
+				5DEE66B82E0C4D5900FFA6E2 /* Alamofire */,
 			);
 			productName = AroundEgyptTask;
 			productReference = 5DEE63D02E0BEBCD00FFA6E2 /* AroundEgyptTask.app */;
@@ -215,7 +215,7 @@
 			mainGroup = 5DEE63C72E0BEBCD00FFA6E2;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				5DEE65562E0C474100FFA6E2 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				5DEE66B72E0C4D5900FFA6E2 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5DEE63D12E0BEBCD00FFA6E2 /* Products */;
@@ -614,7 +614,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5DEE65562E0C474100FFA6E2 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		5DEE66B72E0C4D5900FFA6E2 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
@@ -625,9 +625,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		5DEE65572E0C474100FFA6E2 /* Alamofire */ = {
+		5DEE66B82E0C4D5900FFA6E2 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5DEE65562E0C474100FFA6E2 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = 5DEE66B72E0C4D5900FFA6E2 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
