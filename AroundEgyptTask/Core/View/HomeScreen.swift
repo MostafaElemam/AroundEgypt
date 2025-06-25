@@ -9,9 +9,8 @@ import SwiftUI
 
 struct HomeScreen: View {
     // MARK: - Properties
-    @StateObject private var homeVM = HomeViewModel()
+    @EnvironmentObject private var homeVM: HomeViewModel
     @State private var showExperienceDetails = false
-    
     
     // MARK: - View
     var body: some View {
@@ -28,7 +27,7 @@ struct HomeScreen: View {
         }
         .toolbar(.hidden)
         .sheet(isPresented: $showExperienceDetails, onDismiss: {
-            print("Dismissed")
+            
         }) { ExperienceScreen() }
         
     }
@@ -101,5 +100,6 @@ extension HomeScreen {
 #Preview {
     NavigationStack {
         HomeScreen()
+            .environmentObject(HomeViewModel())
     }
 }

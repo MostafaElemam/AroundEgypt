@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ExperienceView: View {
     let experience: Experience
@@ -35,8 +36,12 @@ struct ExperienceView: View {
 extension ExperienceView {
     
     private var mainImage: some View {
-        Image(.chicken)
+        KFImage(URL(string: experience.coverPhoto))
             .resizable()
+            .placeholder {
+                ProgressView()
+                    .tint(.customOrange)
+            }
             .aspectRatio(contentMode: .fill)
             .frame(height: 154)
             .clipShape(.rect(cornerRadius: 7))
