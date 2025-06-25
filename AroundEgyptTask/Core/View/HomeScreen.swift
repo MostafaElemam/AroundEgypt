@@ -9,8 +9,8 @@ import SwiftUI
 
 struct HomeScreen: View {
     // MARK: - Properties
-    @State private var searchText: String = ""
-    @State private var showExperience = false
+    @StateObject private var homeVM = HomeViewModel()
+    @State private var showExperienceDetails = false
     
     
     // MARK: - View
@@ -27,7 +27,7 @@ struct HomeScreen: View {
             .safeAreaPadding(20)
         }
         .toolbar(.hidden)
-        .sheet(isPresented: $showExperience, onDismiss: {
+        .sheet(isPresented: $showExperienceDetails, onDismiss: {
             print("Dismissed")
         }) { ExperienceScreen() }
         
@@ -53,11 +53,11 @@ extension HomeScreen {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 10) {
-                    ForEach(0..<10) { _ in
-                        ExperienceView()
+                    ForEach(homeVM.recommendedExperiences, id: \.id) { exp in
+                        ExperienceView(experience: exp)
                             .frame(width: 340)
                             .onTapGesture {
-                                showExperience = true
+                                showExperienceDetails = true
                             }
                     }
                 }
@@ -71,10 +71,10 @@ extension HomeScreen {
                 .customFont(.bold, size: 22)
             
             LazyVStack(spacing: 20) {
-                ForEach(0..<10) { _ in
-                    ExperienceView()
+                ForEach(homeVM.recentExperiences, id: \.id) { exp in
+                    ExperienceView(experience: exp)
                         .onTapGesture {
-                            showExperience = true
+                            showExperienceDetails = true
                         }
                 }
             }
@@ -83,7 +83,7 @@ extension HomeScreen {
     private var topBar: some View {
         HStack(spacing: 12) {
             Image(systemName: "line.3.horizontal")
-            CustomSearchBar(searchText: $searchText)
+            CustomSearchBar(searchText: $homeVM.searchText)
             Image(.filter)
         }
         .padding(.horizontal, 20)
