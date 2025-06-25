@@ -13,7 +13,7 @@ class NetworkService {
     // MARK: - Get Data
     func get<T: Codable>(from endPoint: String) async throws -> T  {
         guard let _ = URL(string: endPoint) else { throw NetworkError.invalidURL }
-        let request = AF.request(endPoint, method: .get, headers: .default)
+        let request = AF.request(endPoint, method: .get, headers: K.headers)
         let response = await request.serializingDecodable(T.self).response
         debugPrint(response)
         
