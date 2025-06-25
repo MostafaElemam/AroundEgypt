@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeScreen: View {
     // MARK: - Properties
     @State private var searchText: String = ""
+    @State private var showExperience = false
     
     
     // MARK: - View
@@ -25,8 +26,11 @@ struct HomeScreen: View {
             }
             .safeAreaPadding(20)
         }
-        
         .toolbar(.hidden)
+        .sheet(isPresented: $showExperience, onDismiss: {
+            print("Dismissed")
+        }) { ExperienceScreen() }
+        
     }
 }
 
@@ -50,12 +54,11 @@ extension HomeScreen {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 10) {
                     ForEach(0..<10) { _ in
-                        NavigationLink {
-                            Text("ss")
-                        } label: {
-                            ExperienceView()
-                        }
-                        .frame(width: 340)
+                        ExperienceView()
+                            .frame(width: 340)
+                            .onTapGesture {
+                                showExperience = true
+                            }
                     }
                 }
             }
@@ -69,11 +72,10 @@ extension HomeScreen {
             
             LazyVStack(spacing: 20) {
                 ForEach(0..<10) { _ in
-                    NavigationLink {
-                        Text("ss")
-                    } label: {
-                        ExperienceView()
-                    }
+                    ExperienceView()
+                        .onTapGesture {
+                            showExperience = true
+                        }
                 }
             }
         }
@@ -85,7 +87,7 @@ extension HomeScreen {
             Image(.filter)
         }
         .padding(.horizontal, 20)
-        .padding(.bottom, 20)
+        .padding(.bottom, 8)
     }
 }
 
