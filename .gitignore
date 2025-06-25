@@ -5,6 +5,7 @@ DerivedData/
 xcuserdata/
 *.xcuserstate
 *.xcscmblueprint
+xcshareddata/xcschememanagement.plist
 
 # SwiftPM
 .build/
