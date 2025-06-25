@@ -86,6 +86,7 @@ extension ExperienceView {
                 .customFont(.medium, size: 14)
             Image(.heartFilled)
         }
+        .foregroundStyle(.black)
     }
     
 }
