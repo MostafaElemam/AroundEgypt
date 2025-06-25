@@ -6,10 +6,16 @@
 //
 
 import Foundation
+import Alamofire
 
 
 struct K {
     //URLS
-    static private let baseURL  = "aroundegypt.34ml.com"
+    static private let baseURL  = "https://aroundegypt.34ml.com"
     static let experiencesURL   = "\(baseURL)/api/v2/experiences"
+    static var headers: HTTPHeaders = [
+        .accept("application/json"),
+        .contentType("application/json")
+    ]
+        
 }
