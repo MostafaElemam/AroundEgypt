@@ -10,7 +10,7 @@ import Foundation
 class ExperiencesService {
     
     let networkService: NetworkService
-    init(networkService: NetworkService) {
+    init(networkService: NetworkService = NetworkService()) {
         self.networkService = networkService
     }
     
@@ -25,7 +25,7 @@ class ExperiencesService {
         return response?.data
     }
     
-    func search(q: String) async -> [Experience]? {
+    func searchExperiences(q: String) async -> [Experience]? {
         let url = K.experiencesURL + "?filter[title]=\(q)"
         let response: ExperiencesResponse? = try? await networkService.get(from: url)
         return response?.data
