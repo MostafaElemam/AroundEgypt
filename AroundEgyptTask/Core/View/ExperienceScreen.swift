@@ -19,7 +19,6 @@ struct ExperienceScreen: View {
                 content
             }
         }
-        
     }
 }
 
