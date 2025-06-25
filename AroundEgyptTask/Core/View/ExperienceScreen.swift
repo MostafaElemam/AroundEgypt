@@ -86,7 +86,7 @@ extension ExperienceScreen {
                 .foregroundStyle(.black)
                 Text("Aswan, Egypt")
                     .customFont(.medium, size: 16)
-                    .foregroundStyle(.darkGray)
+                    .foregroundStyle(.customDarkGray)
                 
             }
             .lineLimit(2)
