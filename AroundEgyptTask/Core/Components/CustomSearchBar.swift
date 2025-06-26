@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CustomSearchBar: View {
     @Binding var searchText: String
+    var onSubmit: () -> ()
 
     var body: some View {
         HStack {
@@ -24,6 +25,7 @@ struct CustomSearchBar: View {
                 .autocapitalization(.none)
                 .keyboardType(.asciiCapable) // it make sure it hides the word suggestion
                 .disableAutocorrection(true)
+                .onSubmit(onSubmit)
                 .overlay(alignment: .trailing) {
                     Image(systemName: "xmark.circle.fill")
                         .resizable()
@@ -36,6 +38,7 @@ struct CustomSearchBar: View {
                         .onTapGesture {
                             UIApplication.shared.endEditing()
                             searchText = ""
+                            onSubmit()
                         }
                 }
         }
@@ -51,6 +54,6 @@ struct CustomSearchBar: View {
 // MARK: - Preview
 
 #Preview {
-    CustomSearchBar(searchText: .constant(""))
+    CustomSearchBar(searchText: .constant("")) {}
         .padding(.horizontal)
 }

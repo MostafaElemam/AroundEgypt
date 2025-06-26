@@ -43,11 +43,18 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func getFilteredExperiences() async {
-        let exps = await service.searchExperiences(q: searchText)
-        guard let exps else { return }
-        await MainActor.run {
-            self.filteredExperiences = exps
+    func searchForExperiences() {
+        guard !searchText.isEmpty else {
+            filteredExperiences = []
+            return
+        }
+        
+        Task {
+            let exps = await service.searchExperiences(q: searchText)
+            guard let exps else { return }
+            await MainActor.run {
+                self.filteredExperiences = exps
+            }
         }
     }
     
@@ -59,6 +66,10 @@ class HomeViewModel: ObservableObject {
         if let index = recommendedExperiences.firstIndex(where: { $0.id == id }) {
             recommendedExperiences[index].likesNumber += 1
             recommendedExperiences[index].isLiked = true
+        }
+        if let index = filteredExperiences.firstIndex(where: { $0.id == id }) {
+            filteredExperiences[index].likesNumber += 1
+            filteredExperiences[index].isLiked = true
         }
     }
     
