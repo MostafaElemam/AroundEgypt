@@ -10,22 +10,23 @@ import XCTest
 @testable import AroundEgyptTask
 
 final class ExperienceServiceTests: XCTestCase {
+    private let mockExp = Experience(
+        id: "1",
+        title: "Giza Pyramids",
+        coverPhoto: "pyramids.jpg",
+        description: "Visit the ancient pyramids",
+        city: .init(name: "Giza"),
+        recommended: 1,
+        viewsNumber: 500,
+        likesNumber: 100,
+        hasAudio: false,
+        audioURL: nil
+    )
 
     func test_getExperience_success_returnsExperience() async {
         // Arrange
         let mock = MockNetworkService()
-        mock.mockExperience = Experience(
-            id: "1",
-            title: "Giza Pyramids",
-            coverPhoto: "pyramids.jpg",
-            description: "Visit the ancient pyramids",
-            city: .init(name: "Giza"),
-            recommended: 1,
-            viewsNumber: 500,
-            likesNumber: 100,
-            hasAudio: false,
-            audioURL: nil
-        )
+        mock.mockExperience = mockExp
 
         let service = ExperienceService(networkService: mock)
 
@@ -53,10 +54,10 @@ final class ExperienceServiceTests: XCTestCase {
         XCTAssertNil(result)
     }
 
-    func test_likeExperience_success_returnsTrue() async {
+    func test_likeExperience_success_returnLikesPlus1() async {
         // Arrange
         let mock = MockNetworkService()
-        mock.mockLikeSuccess = true
+        mock.mockExperience = mockExp
 
         let service = ExperienceService(networkService: mock)
 
@@ -64,10 +65,10 @@ final class ExperienceServiceTests: XCTestCase {
         let result = await service.likeExperience(id: "1")
 
         // Assert
-        XCTAssertTrue(result)
+        XCTAssertEqual(result, 101)
     }
 
-    func test_likeExperience_failure_returnsFalse() async {
+    func test_likeExperience_failure_returnsNil() async {
         // Arrange
         let mock = MockNetworkService()
         mock.shouldReturnError = true
@@ -79,6 +80,6 @@ final class ExperienceServiceTests: XCTestCase {
         let result = await service.likeExperience(id: "1")
 
         // Assert
-        XCTAssertFalse(result)
+        XCTAssertNil(result)
     }
 }

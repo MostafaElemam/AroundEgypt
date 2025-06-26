@@ -17,7 +17,7 @@ class ExperienceService {
     func getExperience(for id: String) async -> Experience? {
         let url = K.experiencesURL + "/\(id)"
         do {
-            let response: ExperienceResponse = try await networkService.get(from: url)
+            let response: ExperienceResponse = try await networkService.request(url, method: .get)
             return response.data
             
         } catch let error as NetworkError {
@@ -27,17 +27,18 @@ class ExperienceService {
         return nil
     }
     
-    func likeExperience(id: String) async -> Bool {
+    ///- Returns: the total number of likes for experiens
+    func likeExperience(id: String) async -> Int? {
         let url = K.experiencesURL + "/\(id)/like"
         do {
-            let success = try await networkService.post(to: url)
-            return success
+            let response: UpdateExperienceResponse = try await networkService.request(url, method: .post)
+            return response.data
             
         } catch let error as NetworkError {
             await Helpers.showBanner(error.errorDescription)
         }
         catch {}
-        return false
+        return nil
     }
 }
 
