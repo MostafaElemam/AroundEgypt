@@ -22,6 +22,10 @@ class ExperienceViewModel: ObservableObject {
     
     // MARK: - Funcs
     func getDetails() async {
+        //Load offline first
+        await MainActor.run {
+            self.experience = CoreDataManager.shared.getSavedExperience(by: id)
+        }
         guard let exp = await service.getExperience(for: id) else { return }
         await MainActor.run {
             self.experience = exp
@@ -35,6 +39,7 @@ class ExperienceViewModel: ObservableObject {
             if isLiked {
                 FavouriteManager.shared.addToLikedExperiences(id: id)
                 self.experience?.likesNumber += 1
+                CoreDataManager.shared.updateExperience(experience)
             } else {
                 experience?.isLiked = false
             }
