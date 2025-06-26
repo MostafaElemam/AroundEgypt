@@ -32,6 +32,10 @@ struct HomeScreen: View {
                 
             }
             .safeAreaPadding(20)
+            .refreshable {
+                await homeVM.getRecentExperiences()
+                await homeVM.getRecommendedExperiences()
+            }
         }
         .toolbar(.hidden)
         .sheet(item: $selectedExperience) {

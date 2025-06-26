@@ -29,17 +29,34 @@ class HomeViewModel: ObservableObject {
     // MARK: - Funcs
     
     func getRecommendedExperiences() async  {
+        //Load offline first
+        await MainActor.run {
+            self.recommendedExperiences =  CoreDataManager.shared.getSavedExperiences(forRecent: false)
+        }
+        
         let url = K.experiencesURL + "?filter[recommended]=true"
         let exps = await service.getExperiences(url: url)
         guard let exps else { return }
+        for exp in exps {
+            CoreDataManager.shared.updateExperience(exp, isRecent: false)
+        }
         await MainActor.run {
             self.recommendedExperiences = exps
         }
     }
     func getRecentExperiences() async  {
+        //Load offline first
+        await MainActor.run {
+            self.recentExperiences = CoreDataManager.shared.getSavedExperiences(forRecent: true)
+        }
+        
         let url = K.experiencesURL
         let exps = await service.getExperiences(url: url)
         guard let exps else { return }
+        for exp in exps {
+            CoreDataManager.shared.updateExperience(exp, isRecent: true)
+        }
+        
         await MainActor.run {
             self.recentExperiences = exps
         }
