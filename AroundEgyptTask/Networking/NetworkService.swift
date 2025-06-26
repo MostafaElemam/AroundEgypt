@@ -8,7 +8,12 @@
 import Foundation
 import Alamofire
 
-class NetworkService {
+protocol NetworkServiceProtocol {
+    func get<T: Codable>(from endPoint: String) async throws -> T
+    func post(to endPoint: String) async throws -> Bool
+}
+
+class NetworkService: NetworkServiceProtocol {
     
     // MARK: - Get Data
     func get<T: Codable>(from endPoint: String) async throws -> T  {

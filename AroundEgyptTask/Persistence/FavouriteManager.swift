@@ -7,7 +7,13 @@
 
 import Foundation
 
-class FavouriteManager {
+protocol FavouriteService {
+    func addToLikedExperiences(id: String)
+    func loadLikedExperiences() -> Set<String>
+    func isLiked(experienceID: String) -> Bool
+}
+
+class FavouriteManager: FavouriteService {
     static let shared = FavouriteManager()
     private var likedExperiences: Set<String> {
         get { loadLikedExperiences() }
