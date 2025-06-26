@@ -16,7 +16,7 @@ class ExperiencesService {
     
     func getExperiences(url: String) async throws -> [Experience] {
         do {
-            let response: ExperiencesResponse = try await networkService.get(from: url)
+            let response: ExperiencesResponse = try await networkService.request(url, method: .get)
             return response.data
             
         } catch let error as NetworkError {

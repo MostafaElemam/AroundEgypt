@@ -7,17 +7,20 @@
 
 import Foundation
 @testable import AroundEgyptTask
+@testable import Alamofire
+
 
 class MockNetworkService: NetworkServiceProtocol {
+    
     var shouldReturnError = false
     var mockData: [Experience] = []
     var mockExperience: Experience?
     var mockLikeSuccess = true
     var expectedError: NetworkError = .noData
 
-    func get<T: Codable>(from endPoint: String) async throws -> T {
+    func request<T: Codable>(_ endPoint: String, method: HTTPMethod) async throws -> T {
         if shouldReturnError {
-            throw NetworkError.noData
+            throw expectedError
         }
         // Handle response for [Experience]
         if T.self == ExperiencesResponse.self {
@@ -33,16 +36,16 @@ class MockNetworkService: NetworkServiceProtocol {
             let response = ExperienceResponse(data: exp)
             return response as! T
         }
+        // Handle response for a Like Experience
+        if T.self == UpdateExperienceResponse.self {
+            guard let exp = mockExperience else {
+                throw NetworkError.noData
+            }
+            let response = UpdateExperienceResponse(data: exp.likesNumber + 1)
+            return response as! T
+        }
         
         throw NetworkError.decodingError
     }
-    
-    func post(to endPoint: String) async throws -> Bool {
-        if shouldReturnError {
-            throw expectedError
-        }
-        return mockLikeSuccess
-    }
-    
     
 }
