@@ -1,5 +1,5 @@
 # Around Egypt MiniApp
-A small SwiftUI app to browse tourist places in Egypt. Built with MVVM.
+A small SwiftUI app to explore tourist places in Egypt. Built with MVVM.
 
 ## 📱 Screens
 - Home ( showing list of recent and recommended places)
