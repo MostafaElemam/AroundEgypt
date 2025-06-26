@@ -18,12 +18,18 @@ struct HomeScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             topBar
+            
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 32) {
-                    header
-                    recommendedExperiences
-                    mostRecentExperiences
+                if homeVM.filteredExperiences.isEmpty {
+                    VStack(alignment: .leading, spacing: 32) {
+                        header
+                        recommendedExperiences
+                        experienceList(data: homeVM.recentExperiences)
+                    }
+                } else {
+                    experienceList(data: homeVM.filteredExperiences, showTitle: false)
                 }
+                
             }
             .safeAreaPadding(20)
         }
@@ -67,25 +73,12 @@ extension HomeScreen {
         }
     }
     
-    private var mostRecentExperiences: some View {
-        VStack(alignment: .leading) {
-            Text("Most Recent")
-                .customFont(.bold, size: 22)
-            
-            VStack(spacing: 20) {
-                ForEach(homeVM.recentExperiences, id: \.id) { exp in
-                    ExperienceView(experience: exp)
-                        .onTapGesture {
-                            selectedExperience = exp
-                        }
-                }
-            }
-        }
-    }
     private var topBar: some View {
         HStack(spacing: 12) {
             Image(systemName: "line.3.horizontal")
-            CustomSearchBar(searchText: $homeVM.searchText)
+            CustomSearchBar(searchText: $homeVM.searchText) {
+                homeVM.searchForExperiences()
+            }
             Image(.filter)
         }
         .padding(.horizontal, 20)
@@ -95,12 +88,22 @@ extension HomeScreen {
 
 // MARK: - Functions
 extension HomeScreen {
-    private func updateData() {
-        guard let selectedExperience else { return }
-        if let index = homeVM.recentExperiences.firstIndex(where: { $0.id == selectedExperience.id }) {
-            homeVM.recentExperiences[index] = selectedExperience
-        } else if let index = homeVM.recommendedExperiences.firstIndex(where: { $0.id == selectedExperience.id }) {
-            homeVM.recommendedExperiences[index] = selectedExperience
+    
+    //For more recent and searched experiences
+    func experienceList(data: [Experience], showTitle: Bool = true) -> some View {
+        VStack(alignment: .leading) {
+            if showTitle {
+                Text("Most Recent")
+                    .customFont(.bold, size: 22)
+            }
+            VStack(spacing: 20) {
+                ForEach(data, id: \.id) { exp in
+                    ExperienceView(experience: exp)
+                        .onTapGesture {
+                            selectedExperience = exp
+                        }
+                }
+            }
         }
     }
 }

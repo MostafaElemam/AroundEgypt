@@ -18,7 +18,6 @@ struct ExperienceScreen: View {
         self.didLike = didLike
     }
     
-    
     // MARK: - View
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -83,9 +82,13 @@ extension ExperienceScreen {
                     Text(viewModel.experience?.title ?? "\t")
                         .customFont(.bold, size: 16)
                     Spacer(minLength: 0)
-                    Button {}
-                    label: { Image(.share) }
                     
+                    //Share Link
+                    ShareLink(item: URL(string: "https://aroundegypt.34ml.com")!) {
+                        Image(.share)
+                    }
+                    
+                    //Like Button
                     Button(action: likeExperience) {
                         Image(
                             viewModel.experience?.isLiked ?? false  ? .heartFilled : .heartEmpty
@@ -93,6 +96,7 @@ extension ExperienceScreen {
                     }
                     .disabled(viewModel.experience?.isLiked ?? false)
                     
+                    //Likes Count
                     Text(viewModel.experience?.likesNumber.description ?? "\t")
                         .customFont(.medium, size: 14)
                     
