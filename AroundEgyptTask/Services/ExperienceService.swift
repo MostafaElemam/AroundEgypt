@@ -14,12 +14,12 @@ class ExperienceService {
         self.networkService = networkService
     }
     
-    func getExperience(for id: Int) async -> Experience? {
+    func getExperience(for id: String) async -> Experience? {
         let url = K.experiencesURL + "/\(id)"
         let response: ExperienceResponse? = try? await networkService.get(from: url)
         return response?.data
     }
-    func likeExperience(id: Int) async -> Bool {
+    func likeExperience(id: String) async -> Bool {
         let url = K.experiencesURL + "/\(id)/like"
         let success = try? await networkService.post(to: url)
         return success ?? false

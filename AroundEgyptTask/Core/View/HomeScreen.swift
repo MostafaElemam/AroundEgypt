@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct HomeScreen: View {
+    
     // MARK: - Properties
     @EnvironmentObject private var homeVM: HomeViewModel
-    @State private var showExperienceDetails = false
+    @State private var selectedExperience: Experience?
+    
     
     // MARK: - View
     var body: some View {
@@ -26,10 +28,11 @@ struct HomeScreen: View {
             .safeAreaPadding(20)
         }
         .toolbar(.hidden)
-        .sheet(isPresented: $showExperienceDetails, onDismiss: {
-            
-        }) { ExperienceScreen() }
-        
+        .sheet(item: $selectedExperience) {
+            ExperienceScreen(id: $0.id) { likedExperienceID in
+                homeVM.updateLikedExperiences(id: likedExperienceID)
+            }
+        }
     }
 }
 
@@ -51,12 +54,12 @@ extension HomeScreen {
                 .customFont(.bold, size: 22)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 10) {
+                HStack(spacing: 10) {
                     ForEach(homeVM.recommendedExperiences, id: \.id) { exp in
                         ExperienceView(experience: exp)
                             .frame(width: 340)
                             .onTapGesture {
-                                showExperienceDetails = true
+                                selectedExperience = exp
                             }
                     }
                 }
@@ -69,11 +72,11 @@ extension HomeScreen {
             Text("Most Recent")
                 .customFont(.bold, size: 22)
             
-            LazyVStack(spacing: 20) {
+            VStack(spacing: 20) {
                 ForEach(homeVM.recentExperiences, id: \.id) { exp in
                     ExperienceView(experience: exp)
                         .onTapGesture {
-                            showExperienceDetails = true
+                            selectedExperience = exp
                         }
                 }
             }
@@ -92,7 +95,14 @@ extension HomeScreen {
 
 // MARK: - Functions
 extension HomeScreen {
-    
+    private func updateData() {
+        guard let selectedExperience else { return }
+        if let index = homeVM.recentExperiences.firstIndex(where: { $0.id == selectedExperience.id }) {
+            homeVM.recentExperiences[index] = selectedExperience
+        } else if let index = homeVM.recommendedExperiences.firstIndex(where: { $0.id == selectedExperience.id }) {
+            homeVM.recommendedExperiences[index] = selectedExperience
+        }
+    }
 }
 
 // MARK: - Preview

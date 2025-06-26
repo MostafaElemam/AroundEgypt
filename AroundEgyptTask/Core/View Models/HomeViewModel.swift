@@ -20,6 +20,8 @@ class HomeViewModel: ObservableObject {
         self.service = service
         Task {
             await getRecommendedExperiences()
+        }
+        Task {
             await getRecentExperiences()
         }
     }
@@ -49,5 +51,15 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    func updateLikedExperiences(id: String) {
+        if let index = recentExperiences.firstIndex(where: { $0.id == id }) {
+            recentExperiences[index].likesNumber += 1
+            recentExperiences[index].isLiked = true
+        }
+        if let index = recommendedExperiences.firstIndex(where: { $0.id == id }) {
+            recommendedExperiences[index].likesNumber += 1
+            recommendedExperiences[index].isLiked = true
+        }
+    }
     
 }

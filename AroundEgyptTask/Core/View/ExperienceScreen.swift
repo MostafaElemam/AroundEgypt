@@ -6,15 +6,23 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ExperienceScreen: View {
     // MARK: - Properties
+    @StateObject private var viewModel: ExperienceViewModel
+    let didLike: (_ id: String) -> Void
+    
+    init(id: String, didLike: @escaping (_ id: String) -> Void) {
+        _viewModel = .init(wrappedValue: ExperienceViewModel(id: id))
+        self.didLike = didLike
+    }
     
     
     // MARK: - View
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack {
+            VStack(alignment: .leading) {
                 coverView
                 content
             }
@@ -25,32 +33,33 @@ struct ExperienceScreen: View {
 // MARK: - Components
 extension ExperienceScreen {
     private var coverView: some View {
-        ZStack {
-            Image(.chicken)
+        ZStack(alignment: .center) {
+            KFImage(URL(string: viewModel.experience?.coverPhoto ?? ""))
                 .resizable()
+                .placeholder {
+                    ProgressView().tint(.customOrange)
+                }
                 .aspectRatio(contentMode: .fill)
-                .frame(height: 290)
+                .frame(width: UIScreen.main.bounds.width, height: 290)
+            
+            
             
             //Explore Now Btn
-            Button {
-                
-            } label: {
+            Button {}
+            label: {
                 Text("EXPLORE NOW")
                     .customFont(.bold, size: 14)
                     .foregroundStyle(.customOrange)
                     .padding()
                     .background(
-                        Color.white
-                            .cornerRadius(7)
+                        Color.white.cornerRadius(7)
                     )
-                
             }
         }
-        .padding(.bottom, 10)
         .overlay(alignment: .bottom) {
-            //Visit Counts
+            //View Counts
             HStack {
-                Label("156", systemImage: "eye.fill")
+                Label(viewModel.experience?.viewsNumber.description ?? "\t", systemImage: "eye.fill")
                     .customFont(.medium, size: 14)
                     .foregroundColor(.white)
                 
@@ -64,27 +73,32 @@ extension ExperienceScreen {
             )
         }
         
+        
     }
     private var content: some View {
         VStack(spacing: 20) {
             //Title and Actions
             VStack(alignment: .leading) {
                 HStack(spacing: 14) {
-                    Text("Abu Simple")
+                    Text(viewModel.experience?.title ?? "\t")
                         .customFont(.bold, size: 16)
                     Spacer(minLength: 0)
                     Button {}
                     label: { Image(.share) }
                     
-                    Button {}
-                    label: { Image(.heartEmpty) }
+                    Button(action: likeExperience) {
+                        Image(
+                            viewModel.experience?.isLiked ?? false  ? .heartFilled : .heartEmpty
+                        )
+                    }
+                    .disabled(viewModel.experience?.isLiked ?? false)
                     
-                    Text("45")
+                    Text(viewModel.experience?.likesNumber.description ?? "\t")
                         .customFont(.medium, size: 14)
                     
                 }
                 .foregroundStyle(.black)
-                Text("Aswan, Egypt")
+                Text("\(viewModel.experience?.city.name ?? ""), Egypt")
                     .customFont(.medium, size: 16)
                     .foregroundStyle(.customDarkGray)
                 
@@ -92,12 +106,12 @@ extension ExperienceScreen {
             .lineLimit(2)
             
             Divider()
-            //Description
             
+            //Description
             VStack(alignment: .leading, spacing: 4) {
                 Text("Description")
                     .customFont(.bold, size: 22)
-                Text("The Abu Simbel temples are two massive rock temples at Abu Simbel, a village in Nubia, southern Egypt, near the border with Sudan. They are situated on the western bank of Lake Nasser, about 230 km southwest of Aswan (about 300 km by road). The twin temples were originally carved out of the mountainside in the 13th century BC, during the 19th dynasty reign of the Pharaoh Ramesses II. They serve as a lasting monument to the king and his queen Nefertari, and commemorate his victory at the Battle of Kadesh. Their huge external rock relief figures have become iconic.")
+                Text(viewModel.experience?.description ?? "\t")
                     .customFont(.medium, size: 14)
             }
             .foregroundStyle(.black)
@@ -109,11 +123,19 @@ extension ExperienceScreen {
 
 // MARK: - Functions
 extension ExperienceScreen {
-    
+    private func likeExperience() {
+        viewModel.experience?.isLiked = true
+        Task {
+            let isLiked = await viewModel.likeExperience()
+            if isLiked {
+                didLike(viewModel.id)
+            }
+        }
+    }
 }
 
 // MARK: - Preview
 
 #Preview {
-    ExperienceScreen()
+    ExperienceScreen(id: Preview.dev.experience.id) { _ in }
 }
