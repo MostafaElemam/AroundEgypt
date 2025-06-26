@@ -32,47 +32,46 @@ struct ExperienceScreen: View {
 // MARK: - Components
 extension ExperienceScreen {
     private var coverView: some View {
-        ZStack(alignment: .center) {
-            KFImage(URL(string: viewModel.experience?.coverPhoto ?? ""))
-                .resizable()
-                .placeholder {
-                    ProgressView().tint(.customOrange)
-                }
-                .aspectRatio(contentMode: .fill)
-                .frame(width: UIScreen.main.bounds.width, height: 290)
-            
-            
-            
-            //Explore Now Btn
-            Button {}
-            label: {
-                Text("EXPLORE NOW")
-                    .customFont(.bold, size: 14)
-                    .foregroundStyle(.customOrange)
-                    .padding()
-                    .background(
-                        Color.white.cornerRadius(7)
-                    )
-            }
-        }
-        .overlay(alignment: .bottom) {
-            //View Counts
-            HStack {
-                Label(viewModel.experience?.viewsNumber.description ?? "\t", systemImage: "eye.fill")
-                    .customFont(.medium, size: 14)
-                    .foregroundColor(.white)
+        ZStack(alignment: .bottom) {
+            ZStack(alignment: .center) {
+                KFImage(URL(string: viewModel.experience?.coverPhoto ?? ""))
+                    .resizable()
+                    .placeholder {
+                        ProgressView().tint(.customOrange)
+                    }
+                    .frame(width: UIScreen.main.bounds.width, height: 290)
+                    .scaledToFill()
                 
-                Spacer()
-                Image(.multiplePictures)
+                //Explore Now Btn
+                Button {}
+                label: {
+                    Text("EXPLORE NOW")
+                        .customFont(.bold, size: 14)
+                        .foregroundStyle(.customOrange)
+                        .padding()
+                        .background(
+                            Color.white.cornerRadius(7)
+                        )
+                }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
-            .background(
-                LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
-            )
+            //Views count
+            viewsCount
         }
-        
-        
+    }
+    private var viewsCount: some View {
+        HStack {
+            Label(viewModel.experience?.viewsNumber.description ?? "\t", systemImage: "eye.fill")
+                .customFont(.medium, size: 14)
+                .foregroundColor(.white)
+            
+            Spacer()
+            Image(.multiplePictures)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .background(
+            LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
+        )
     }
     private var content: some View {
         VStack(spacing: 20) {

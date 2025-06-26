@@ -14,20 +14,15 @@ class ExperiencesService {
         self.networkService = networkService
     }
     
-    func getRecommendedExperiences() async -> [Experience]? {
-        let url = K.experiencesURL + "?filter[recommended]=true"
-        let response: ExperiencesResponse? = try? await networkService.get(from: url)
-        return response?.data
-    }
-    func getRecentExperiences() async -> [Experience]? {
-        let url = K.experiencesURL
-        let response: ExperiencesResponse? = try? await networkService.get(from: url)
-        return response?.data
-    }
-    
-    func searchExperiences(q: String) async -> [Experience]? {
-        let url = K.experiencesURL + "?filter[title]=\(q)"
-        let response: ExperiencesResponse? = try? await networkService.get(from: url)
-        return response?.data
+    func getExperiences(url: String) async -> [Experience]? {
+        do {
+            let response: ExperiencesResponse = try await networkService.get(from: url)
+            return response.data
+            
+        } catch let error as NetworkError {
+            await Helpers.showBanner(error.errorDescription)
+        }
+        catch {}
+        return nil
     }
 }

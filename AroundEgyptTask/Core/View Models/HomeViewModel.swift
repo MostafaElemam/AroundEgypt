@@ -29,14 +29,16 @@ class HomeViewModel: ObservableObject {
     // MARK: - Funcs
     
     func getRecommendedExperiences() async  {
-        let exps = await service.getRecommendedExperiences()
+        let url = K.experiencesURL + "?filter[recommended]=true"
+        let exps = await service.getExperiences(url: url)
         guard let exps else { return }
         await MainActor.run {
             self.recommendedExperiences = exps
         }
     }
     func getRecentExperiences() async  {
-        let exps = await service.getRecentExperiences()
+        let url = K.experiencesURL
+        let exps = await service.getExperiences(url: url)
         guard let exps else { return }
         await MainActor.run {
             self.recentExperiences = exps
@@ -48,9 +50,9 @@ class HomeViewModel: ObservableObject {
             filteredExperiences = []
             return
         }
-        
+        let url = K.experiencesURL + "?filter[title]=\(searchText)"
         Task {
-            let exps = await service.searchExperiences(q: searchText)
+            let exps = await service.getExperiences(url: url)
             guard let exps else { return }
             await MainActor.run {
                 self.filteredExperiences = exps

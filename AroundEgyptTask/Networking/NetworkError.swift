@@ -29,7 +29,7 @@ extension NetworkError {
                     case 401:
                         return "Unauthenticated. Please log in first."
                     case 404:
-                        return "The movie id is invalid or not found."
+                        return "The experience id is invalid or not found."
                     case 502:
                         return "Couldn't connect to the backend server."
                     default:
