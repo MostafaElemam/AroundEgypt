@@ -33,7 +33,7 @@ class NetworkService {
     // MARK: - Post Data
     func post(to endPoint: String) async throws -> Bool {
         guard let _ = URL(string: endPoint) else { throw NetworkError.invalidURL }
-        let request = AF.request(endPoint, method: .get, encoding: JSONEncoding.default, headers: .default)
+        let request = AF.request(endPoint, method: .post, headers: K.headers)
         let response = await request.serializingData().response
         debugPrint(response)
         

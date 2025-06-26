@@ -45,9 +45,13 @@ struct Experience: Codable, Identifiable {
     let city: City
     let recommended: Int
     let viewsNumber: Int
-    let likesNumber: Int
+    var likesNumber: Int
     let hasAudio: Bool
     let audioURL: String?
+    var isLiked: Bool {
+        get { FavouriteManager.shared.isLiked(experienceID: id) }
+        set {}
+    }
     
     struct City: Codable {
         let name: String
