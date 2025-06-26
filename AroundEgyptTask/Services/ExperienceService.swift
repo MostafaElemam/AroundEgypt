@@ -9,8 +9,8 @@ import Foundation
 
 class ExperienceService {
     
-    private let networkService: NetworkService
-    init(networkService: NetworkService = NetworkService()) {
+    private let networkService: NetworkServiceProtocol
+    init(networkService: NetworkServiceProtocol = NetworkService()) {
         self.networkService = networkService
     }
     

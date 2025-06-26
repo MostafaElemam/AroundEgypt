@@ -11,10 +11,18 @@ class ExperienceViewModel: ObservableObject {
     @Published var experience: Experience?
     let id: String
     let service: ExperienceService
+    let favouriteManager: FavouriteService
+    let coreDataService: CoreDataService
     
-    init(id: String, service: ExperienceService = ExperienceService()) {
+    init(id: String,
+         service: ExperienceService = ExperienceService(),
+         favouriteManager: FavouriteService = FavouriteManager.shared,
+         coreDataService: CoreDataService = CoreDataManager.shared) {
         self.id = id
         self.service = service
+        self.favouriteManager = favouriteManager
+        self.coreDataService = coreDataService
+        
         Task {
             await getDetails()
         }
@@ -24,7 +32,7 @@ class ExperienceViewModel: ObservableObject {
     func getDetails() async {
         //Load offline first
         await MainActor.run {
-            self.experience = CoreDataManager.shared.getSavedExperience(by: id)
+            self.experience = coreDataService.getSavedExperience(by: id)
         }
         guard let exp = await service.getExperience(for: id) else { return }
         await MainActor.run {
@@ -37,9 +45,9 @@ class ExperienceViewModel: ObservableObject {
         let isLiked = await service.likeExperience(id: id)
         await MainActor.run {
             if isLiked {
-                FavouriteManager.shared.addToLikedExperiences(id: id)
+                favouriteManager.addToLikedExperiences(id: id)
                 self.experience?.likesNumber += 1
-                CoreDataManager.shared.updateExperience(experience)
+                coreDataService.updateExperience(experience, isRecent: nil)
             } else {
                 experience?.isLiked = false
             }

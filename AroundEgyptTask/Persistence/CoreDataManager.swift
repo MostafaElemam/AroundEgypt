@@ -9,7 +9,13 @@
 import CoreData
 import SwiftUI
 
-class CoreDataManager {
+protocol CoreDataService {
+    func getSavedExperience(by id: String) -> Experience?
+    func getSavedExperiences(forRecent: Bool) -> [Experience]
+    func updateExperience(_ exp: Experience?, isRecent: Bool?)
+}
+
+class CoreDataManager: CoreDataService {
     // MARK: - Properties
     static let shared = CoreDataManager()
     private let container: NSPersistentContainer

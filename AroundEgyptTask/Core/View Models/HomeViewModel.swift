@@ -14,16 +14,17 @@ class HomeViewModel: ObservableObject {
     @Published var recentExperiences: [Experience] = []
     @Published var filteredExperiences: [Experience] = []
     @Published var searchText: String = ""
-    let service: ExperiencesService
     
-    init(service: ExperiencesService = ExperiencesService()) {
+    let service: ExperiencesService
+    let coreDataService: CoreDataService
+    
+    init(service: ExperiencesService = ExperiencesService(),
+         coreDataService: CoreDataService = CoreDataManager.shared) {
         self.service = service
-        Task {
-            await getRecommendedExperiences()
-        }
-        Task {
-            await getRecentExperiences()
-        }
+        self.coreDataService = coreDataService
+        
+        Task { await getRecommendedExperiences() }
+        Task { await getRecentExperiences() }
     }
     
     // MARK: - Funcs
@@ -31,14 +32,14 @@ class HomeViewModel: ObservableObject {
     func getRecommendedExperiences() async  {
         //Load offline first
         await MainActor.run {
-            self.recommendedExperiences =  CoreDataManager.shared.getSavedExperiences(forRecent: false)
+            self.recommendedExperiences =  coreDataService.getSavedExperiences(forRecent: false)
         }
         
         let url = K.experiencesURL + "?filter[recommended]=true"
-        let exps = await service.getExperiences(url: url)
+        let exps = try? await service.getExperiences(url: url)
         guard let exps else { return }
         for exp in exps {
-            CoreDataManager.shared.updateExperience(exp, isRecent: false)
+            coreDataService.updateExperience(exp, isRecent: false)
         }
         await MainActor.run {
             self.recommendedExperiences = exps
@@ -47,14 +48,14 @@ class HomeViewModel: ObservableObject {
     func getRecentExperiences() async  {
         //Load offline first
         await MainActor.run {
-            self.recentExperiences = CoreDataManager.shared.getSavedExperiences(forRecent: true)
+            self.recentExperiences = coreDataService.getSavedExperiences(forRecent: true)
         }
         
         let url = K.experiencesURL
-        let exps = await service.getExperiences(url: url)
+        let exps = try? await service.getExperiences(url: url)
         guard let exps else { return }
         for exp in exps {
-            CoreDataManager.shared.updateExperience(exp, isRecent: true)
+            coreDataService.updateExperience(exp, isRecent: true)
         }
         
         await MainActor.run {
@@ -69,7 +70,7 @@ class HomeViewModel: ObservableObject {
         }
         let url = K.experiencesURL + "?filter[title]=\(searchText)"
         Task {
-            let exps = await service.getExperiences(url: url)
+            let exps = try? await service.getExperiences(url: url)
             guard let exps else { return }
             await MainActor.run {
                 self.filteredExperiences = exps

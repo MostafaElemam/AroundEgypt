@@ -9,20 +9,22 @@ import Foundation
 
 class ExperiencesService {
     
-    let networkService: NetworkService
-    init(networkService: NetworkService = NetworkService()) {
+    let networkService: NetworkServiceProtocol
+    init(networkService: NetworkServiceProtocol = NetworkService()) {
         self.networkService = networkService
     }
     
-    func getExperiences(url: String) async -> [Experience]? {
+    func getExperiences(url: String) async throws -> [Experience] {
         do {
             let response: ExperiencesResponse = try await networkService.get(from: url)
             return response.data
             
         } catch let error as NetworkError {
             await Helpers.showBanner(error.errorDescription)
+            throw error
         }
-        catch {}
-        return nil
+        catch {
+            throw error
+        }
     }
 }
