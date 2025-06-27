@@ -66,7 +66,7 @@ final class HomeViewModelTests: XCTestCase {
         await vm.getRecentExperiences()
         await vm.getRecommendedExperiences()
         // Act
-        vm.updateLikedExperiences(id: "5")
+        vm.updateLikedExperiences(id: "5", count: exp.likesNumber + 1)
 
         // Assert
         XCTAssertEqual(vm.recentExperiences[0].likesNumber, 31)

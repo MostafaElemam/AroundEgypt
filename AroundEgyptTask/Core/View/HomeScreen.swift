@@ -40,8 +40,8 @@ struct HomeScreen: View {
         .onAppear(perform: refreshData)
         .toolbar(.hidden)
         .sheet(item: $selectedExperience) {
-            ExperienceScreen(id: $0.id) { likedExperienceID in
-                homeVM.updateLikedExperiences(id: likedExperienceID)
+            ExperienceScreen(id: $0.id) { likedExperienceID, newCount in
+                homeVM.updateLikedExperiences(id: likedExperienceID, count: newCount)
             }
         }
     }

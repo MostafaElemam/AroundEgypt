@@ -87,17 +87,17 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func updateLikedExperiences(id: String) {
+    func updateLikedExperiences(id: String, count: Int) {
         if let index = recentExperiences.firstIndex(where: { $0.id == id }) {
-            recentExperiences[index].likesNumber += 1
+            recentExperiences[index].likesNumber = count
             recentExperiences[index].isLiked = true
         }
         if let index = recommendedExperiences.firstIndex(where: { $0.id == id }) {
-            recommendedExperiences[index].likesNumber += 1
+            recommendedExperiences[index].likesNumber = count
             recommendedExperiences[index].isLiked = true
         }
         if let index = filteredExperiences.firstIndex(where: { $0.id == id }) {
-            filteredExperiences[index].likesNumber += 1
+            filteredExperiences[index].likesNumber = count
             filteredExperiences[index].isLiked = true
         }
     }
