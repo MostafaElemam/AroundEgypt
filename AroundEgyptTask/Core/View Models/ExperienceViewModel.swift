@@ -39,22 +39,22 @@ class ExperienceViewModel: ObservableObject {
             self.experience = exp
         }
     }
-    func likeExperience() async -> Bool {
-        guard let id = experience?.id else { return false }
+    func likeExperience() async -> (success: Bool, count: Int? ) {
+        guard let id = experience?.id else { return (false, nil) }
         
         let likesCount = await service.likeExperience(id: id)
         guard let likesCount else {
             await MainActor.run {
                 self.experience?.isLiked = false
             }
-            return false
+            return (false, nil)
         }
         await MainActor.run {
             favouriteManager.addToLikedExperiences(id: id)
             self.experience?.likesNumber = likesCount
             coreDataService.updateExperience(experience, isRecent: nil)
         }
-        return true
+        return (true, likesCount)
         
     }
 }

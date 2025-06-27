@@ -51,10 +51,10 @@ final class ExperienceViewModelTests: XCTestCase {
         
         // Act
         await vm.getDetails()
-        let success = await vm.likeExperience()
+        let response = await vm.likeExperience()
         
         // Assert
-        XCTAssertTrue(success)
+        XCTAssertTrue(response.success)
         XCTAssertEqual(vm.experience?.likesNumber, 3)
         XCTAssertTrue(mockCoreData.didCallUpdate)
         XCTAssertEqual(mockFavourites.addedIDs, ["123"])

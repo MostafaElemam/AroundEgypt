@@ -38,7 +38,7 @@ struct ExperienceResponse: Codable {
 }
 
 struct Experience: Codable, Identifiable {
-    let id: String
+    var id: String
     let title: String
     let coverPhoto: String
     let description: String

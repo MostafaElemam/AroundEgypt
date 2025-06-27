@@ -11,9 +11,9 @@ import Kingfisher
 struct ExperienceScreen: View {
     // MARK: - Properties
     @StateObject private var viewModel: ExperienceViewModel
-    let didLike: (_ id: String) -> Void
+    let didLike: (_ id: String, _ newCount: Int) -> Void
     
-    init(id: String, didLike: @escaping (_ id: String) -> Void) {
+    init(id: String, didLike: @escaping (_ id: String, _ newCount: Int) -> Void) {
         _viewModel = .init(wrappedValue: ExperienceViewModel(id: id))
         self.didLike = didLike
     }
@@ -132,9 +132,9 @@ extension ExperienceScreen {
     private func likeExperience() {
         viewModel.experience?.isLiked = true
         Task {
-            let isLiked = await viewModel.likeExperience()
-            if isLiked {
-                didLike(viewModel.id)
+            let response = await viewModel.likeExperience()
+            if response.success, let count = response.count {
+                didLike(viewModel.id, count)
             }
         }
     }
@@ -149,5 +149,5 @@ extension ExperienceScreen {
 // MARK: - Preview
 
 #Preview {
-    ExperienceScreen(id: Preview.dev.experience.id) { _ in }
+    ExperienceScreen(id: Preview.dev.experience.id) { _, _ in }
 }
