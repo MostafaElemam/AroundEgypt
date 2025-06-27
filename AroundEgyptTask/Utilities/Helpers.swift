@@ -20,8 +20,8 @@ class Helpers {
         view.configureTheme(theme)
         view.configureDropShadow()
         
-        view.titleLabel?.font = UIFont(name: "Inter-Regular_SemiBold", size: 16)
-        view.bodyLabel?.font = UIFont(name: "Inter-Regular", size: 14)
+        view.titleLabel?.font = UIFont(name: "GothamRnd-Bold", size: 16)
+        view.bodyLabel?.font = UIFont(name: "Gotham-Regular", size: 14)
         view.layoutMarginAdditions = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 0)
         
         view.configureContent(title: NSLocalizedString(title, comment: ""), body: message)
@@ -32,3 +32,4 @@ class Helpers {
     }
     
 }
+

@@ -14,4 +14,7 @@ extension View {
     func customFont(_ font: GothamFont, size: CGFloat) -> some View {
         modifier(CustomFontModifier(font: font, size: size))
     }
+    func redacted(_ enable: Bool, style: RedactedStyle = .placeholder) -> some View {
+        modifier(RedactedViewModifier(isRedacted: enable, style: style))
+    }
 }

@@ -27,7 +27,7 @@ struct HomeScreen: View {
                         experienceList(data: homeVM.recentExperiences)
                     }
                 } else {
-                    experienceList(data: homeVM.filteredExperiences, showTitle: false)
+                    experienceList(data: homeVM.filteredExperiences, forRecentExps: false)
                 }
                 
             }
@@ -67,9 +67,10 @@ extension HomeScreen {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
                     ForEach(homeVM.recommendedExperiences, id: \.id) { exp in
-                        ExperienceView(experience: exp)
+                        ExperienceView(experience: exp, isLoading: homeVM.loadingRecommendedExp)
                             .frame(width: 340)
                             .onTapGesture {
+                                if homeVM.loadingRecommendedExp { return }
                                 selectedExperience = exp
                             }
                     }
@@ -95,16 +96,17 @@ extension HomeScreen {
 extension HomeScreen {
     
     //For more recent and searched experiences
-    func experienceList(data: [Experience], showTitle: Bool = true) -> some View {
+    func experienceList(data: [Experience], forRecentExps: Bool = true) -> some View {
         VStack(alignment: .leading) {
-            if showTitle {
+            if forRecentExps {
                 Text("Most Recent")
                     .customFont(.bold, size: 22)
             }
             VStack(spacing: 20) {
                 ForEach(data, id: \.id) { exp in
-                    ExperienceView(experience: exp)
+                    ExperienceView(experience: exp, isLoading: homeVM.loadingRecentExp)
                         .onTapGesture {
+                            if forRecentExps,homeVM.loadingRecentExp { return }
                             selectedExperience = exp
                         }
                 }

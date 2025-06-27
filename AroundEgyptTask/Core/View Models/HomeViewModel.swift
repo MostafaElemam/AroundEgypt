@@ -5,7 +5,7 @@
 //  Created by Mostafa Elemam on 25/06/2025.
 //
 
-import Foundation
+import SwiftUI
 
 class HomeViewModel: ObservableObject {
     
@@ -14,6 +14,8 @@ class HomeViewModel: ObservableObject {
     @Published var recentExperiences: [Experience] = []
     @Published var filteredExperiences: [Experience] = []
     @Published var searchText: String = ""
+    @Published var loadingRecommendedExp = true
+    @Published var loadingRecentExp = true
     
     let service: ExperiencesService
     let coreDataService: CoreDataService
@@ -32,23 +34,29 @@ class HomeViewModel: ObservableObject {
     func getRecommendedExperiences() async  {
         //Load offline first
         await MainActor.run {
-            self.recommendedExperiences =  coreDataService.getSavedExperiences(forRecent: false)
+            let savedExps = coreDataService.getSavedExperiences(forRecent: false)
+            recommendedExperiences = savedExps.isEmpty ? Preview.dev.dummyExperiences(count: 5) : savedExps // dummy data till api returns
+            loadingRecommendedExp = savedExps.isEmpty
         }
         
         let url = K.experiencesURL + "?filter[recommended]=true"
         let exps = try? await service.getExperiences(url: url)
         guard let exps else { return }
+        
         for exp in exps {
             coreDataService.updateExperience(exp, isRecent: false)
         }
         await MainActor.run {
+            self.loadingRecommendedExp = false
             self.recommendedExperiences = exps
         }
     }
     func getRecentExperiences() async  {
         //Load offline first
         await MainActor.run {
-            self.recentExperiences = coreDataService.getSavedExperiences(forRecent: true)
+            let savedExps = coreDataService.getSavedExperiences(forRecent: true)
+            self.recentExperiences = savedExps.isEmpty ? Preview.dev.dummyExperiences(count: 5) : savedExps // dummy data till api returns
+            loadingRecentExp = savedExps.isEmpty
         }
         
         let url = K.experiencesURL
@@ -59,6 +67,7 @@ class HomeViewModel: ObservableObject {
         }
         
         await MainActor.run {
+            self.loadingRecentExp = false
             self.recentExperiences = exps
         }
     }
