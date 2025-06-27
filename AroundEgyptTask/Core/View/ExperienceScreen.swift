@@ -75,7 +75,7 @@ extension ExperienceScreen {
         )
     }
     private var content: some View {
-        VStack(spacing: 20) {
+        VStack(alignment: .leading, spacing: 20) {
             //Title and Actions
             VStack(alignment: .leading) {
                 HStack(spacing: 14) {
@@ -115,7 +115,9 @@ extension ExperienceScreen {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Description")
                     .customFont(.bold, size: 22)
-                Text(viewModel.experience?.description ?? "\t")
+                
+                let description = viewModel.experience?.description ?? ""
+                Text(description.isEmpty ? "Description is not available. 😔" : description)
                     .customFont(.medium, size: 14)
             }
             .foregroundStyle(.black)

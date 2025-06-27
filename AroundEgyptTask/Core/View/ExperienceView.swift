@@ -10,6 +10,7 @@ import Kingfisher
 
 struct ExperienceView: View {
     let experience: Experience
+    let isLoading: Bool
     
     // MARK: - View
     var body: some View {
@@ -39,8 +40,10 @@ extension ExperienceView {
         KFImage(URL(string: experience.coverPhoto))
             .resizable()
             .placeholder {
-                ProgressView()
-                    .tint(.customOrange)
+                Image(.logo)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 154)
             }
             .aspectRatio(contentMode: .fill)
             .frame(height: 154)
@@ -57,6 +60,7 @@ extension ExperienceView {
                     
                     Text("RECOMMENDED")
                         .customFont(.bold, size: 10)
+                        
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -93,6 +97,7 @@ extension ExperienceView {
                 .customFont(.medium, size: 14)
             Image(.heartFilled)
         }
+        .redacted(isLoading)
         .foregroundStyle(.black)
     }
     
@@ -101,6 +106,6 @@ extension ExperienceView {
 // MARK: - Preview
 
 #Preview {
-    ExperienceView(experience: Preview.dev.experience)
+    ExperienceView(experience: Preview.dev.experience, isLoading: true)
         .padding(.horizontal, 20)
 }
