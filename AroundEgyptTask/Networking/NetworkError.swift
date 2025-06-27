@@ -10,6 +10,7 @@ import Foundation
 enum NetworkError: Error {
     case invalidURL
     case noData
+    case noConnection
     case decodingError
     case networkFailure(error: Error)
     case serverError(statusCode: Int)
@@ -38,6 +39,8 @@ extension NetworkError {
                 
             case .networkFailure(let error):
                 return error.localizedDescription.removedSemiColon
+            case .noConnection:
+                return "You are offline. Please check your internet connection and try again."
         }
     }
 }
