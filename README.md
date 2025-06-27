@@ -15,7 +15,8 @@ A small SwiftUI app to explore tourist places in Egypt. Built with MVVM.
 - UI Testing
 - Caching using CoreData.
 - GitFlow.
-- 
+- Network Monitor
+  
 ## ⚖️ Tradeoffs & Decisions
 - Used `UserDefaults` for like experiences for simplicity.
 - Used CoreData to save experiences locally for offline use.
