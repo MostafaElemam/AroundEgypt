@@ -16,13 +16,12 @@ protocol CoreDataService {
 }
 
 class CoreDataManager: CoreDataService {
-    // MARK: - Properties
     static let shared = CoreDataManager()
-    private let container: NSPersistentContainer
-    private let containerName: String = "ExperienceDataModel"
-    private let entityName: String = "ExperienceEntity"
     
-    var savedEntities: [ExperienceEntity] = []
+    private let containerName = "ExperienceDataModel"
+    private let entityName = "ExperienceEntity"
+    private let container: NSPersistentContainer
+    private let backgroundContext: NSManagedObjectContext
     
     private init() {
         container = NSPersistentContainer(name: containerName)
@@ -30,59 +29,65 @@ class CoreDataManager: CoreDataService {
             if let error = error {
                 print("Core Data failed to load: \(error)")
             }
-            self.getSavedEntities()
         }
+        backgroundContext = container.newBackgroundContext()
     }
+    
     // MARK: - Public
+    
     func updateExperience(_ exp: Experience?, isRecent: Bool? = nil) {
         guard let exp else { return }
-        // check if experience is already saved
-        if let entity = savedEntities.first(where: { $0.id == exp.id }) {
-            update(entity: entity, experience: exp)
-        } else {
-            add(experience: exp, isRecent: isRecent ?? false)
-        }
-    }
-    func getSavedExperience(by id: String) -> Experience? {
-        if let savedEntity = savedEntities.filter ({ $0.id == id }).first {
-            return Experience(id: savedEntity.id ?? "",
-                              title: savedEntity.title ?? "",
-                              coverPhoto: savedEntity.coverPhoto ?? "",
-                              description: savedEntity.detailedDesc ?? "",
-                              city: Experience.City(name: savedEntity.cityName ?? ""),
-                              recommended: Int(savedEntity.recommended),
-                              viewsNumber: Int(savedEntity.viewsNum),
-                              likesNumber: Int(savedEntity.likesNum),
-                              hasAudio: false, audioURL: nil)
-        }
-        return nil
-    }
-    func getSavedExperiences(forRecent: Bool) -> [Experience] {
-        let filteredEntities = savedEntities.filter { $0.isRecent == forRecent }
-        return filteredEntities.map { entity in
-            Experience(id: entity.id ?? "",
-                       title: entity.title ?? "",
-                       coverPhoto: entity.coverPhoto ?? "",
-                       description: entity.detailedDesc ?? "",
-                       city: Experience.City(name: entity.cityName ?? ""),
-                       recommended: Int(entity.recommended),
-                       viewsNumber: Int(entity.viewsNum),
-                       likesNumber: Int(entity.likesNum),
-                       hasAudio: false, audioURL: nil)
-        }
-    }
-    // MARK: -  Private
-    private func getSavedEntities() {
-        let request = NSFetchRequest<ExperienceEntity>(entityName: entityName)
-        do {
-            savedEntities = try container.viewContext.fetch(request)
-        } catch let error {
-            print("Error fetching Experience Entities. \(error)")
+        
+        backgroundContext.perform {
+            let request: NSFetchRequest<ExperienceEntity> = ExperienceEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %@", exp.id)
+            
+            do {
+                let results = try self.backgroundContext.fetch(request)
+                if let entity = results.first {
+                    self.update(entity: entity, with: exp)
+                } else {
+                    self.add(experience: exp, isRecent: isRecent ?? false)
+                }
+                try self.backgroundContext.save()
+            } catch {
+                print("Core Data update error: \(error)")
+            }
         }
     }
     
+    func getSavedExperience(by id: String) -> Experience? {
+        let request: NSFetchRequest<ExperienceEntity> = ExperienceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id)
+        
+        do {
+            let result = try container.viewContext.fetch(request).first
+            if let entity = result {
+                return self.mapEntityToExperience(entity)
+            }
+        } catch {
+            print("Fetch by ID error: \(error)")
+        }
+        return nil
+    }
+    
+    func getSavedExperiences(forRecent: Bool) -> [Experience] {
+        let request: NSFetchRequest<ExperienceEntity> = ExperienceEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "isRecent == %@", NSNumber(value: forRecent))
+        
+        do {
+            let entities = try container.viewContext.fetch(request)
+            return entities.map { self.mapEntityToExperience($0) }
+        } catch {
+            print("Fetch recent/rec error: \(error)")
+            return []
+        }
+    }
+    
+    // MARK: - Private
+    
     private func add(experience: Experience, isRecent: Bool) {
-        let entity = ExperienceEntity(context: container.viewContext)
+        let entity = ExperienceEntity(context: backgroundContext)
         entity.id = experience.id
         entity.title = experience.title
         entity.cityName = experience.city.name
@@ -93,9 +98,9 @@ class CoreDataManager: CoreDataService {
         entity.coverPhoto = experience.coverPhoto
         entity.recommended = Int16(experience.recommended)
         entity.isRecent = isRecent
-        applyChanges()
     }
-    private func update(entity: ExperienceEntity, experience: Experience) {
+    
+    private func update(entity: ExperienceEntity, with experience: Experience) {
         entity.title = experience.title
         entity.cityName = experience.city.name
         entity.detailedDesc = experience.description
@@ -104,19 +109,21 @@ class CoreDataManager: CoreDataService {
         entity.isLiked = experience.isLiked
         entity.coverPhoto = experience.coverPhoto
         entity.recommended = Int16(experience.recommended)
-        applyChanges()
-    }
-    private func save() {
-        do {
-            try container.viewContext.save()
-        } catch let error {
-            print("Error saving to Core Data. \(error)")
-        }
     }
     
-    private func applyChanges() {
-        save()
-        getSavedEntities()
+    private func mapEntityToExperience(_ entity: ExperienceEntity) -> Experience {
+        return Experience(
+            id: entity.id ?? "",
+            title: entity.title ?? "",
+            coverPhoto: entity.coverPhoto ?? "",
+            description: entity.detailedDesc ?? "",
+            city: Experience.City(name: entity.cityName ?? ""),
+            recommended: Int(entity.recommended),
+            viewsNumber: Int(entity.viewsNum),
+            likesNumber: Int(entity.likesNum),
+            hasAudio: false,
+            audioURL: nil
+        )
     }
 }
 

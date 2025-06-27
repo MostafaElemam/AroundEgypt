@@ -33,10 +33,11 @@ struct HomeScreen: View {
             }
             .safeAreaPadding(20)
             .refreshable {
-                await homeVM.getRecentExperiences()
-                await homeVM.getRecommendedExperiences()
+                Task { await homeVM.getRecentExperiences() }
+                Task { await homeVM.getRecommendedExperiences() }
             }
         }
+        .onAppear(perform: refreshData)
         .toolbar(.hidden)
         .sheet(item: $selectedExperience) {
             ExperienceScreen(id: $0.id) { likedExperienceID in
@@ -110,8 +111,14 @@ extension HomeScreen {
             }
         }
     }
+    private func refreshData() {
+        NetworkMonitor.shared.onReconnect =  {
+            Helpers.showBanner(title: "", "📶 Network reconnected.", theme: .success)
+            Task { await homeVM.getRecentExperiences() }
+            Task { await homeVM.getRecommendedExperiences() }
+        }
+    }
 }
-
 // MARK: - Preview
 
 #Preview {

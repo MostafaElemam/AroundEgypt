@@ -26,6 +26,7 @@ struct ExperienceScreen: View {
                 content
             }
         }
+        .onAppear(perform: refreshData)
     }
 }
 
@@ -133,6 +134,12 @@ extension ExperienceScreen {
             if isLiked {
                 didLike(viewModel.id)
             }
+        }
+    }
+    private func refreshData() {
+        NetworkMonitor.shared.onReconnect =  {
+            Helpers.showBanner(title: "", "📶 Network reconnected.", theme: .success)
+            Task { await viewModel.getDetails() }
         }
     }
 }
