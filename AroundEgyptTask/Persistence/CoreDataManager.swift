@@ -88,42 +88,16 @@ class CoreDataManager: CoreDataService {
     
     private func add(experience: Experience, isRecent: Bool) {
         let entity = ExperienceEntity(context: backgroundContext)
-        entity.id = experience.id
-        entity.title = experience.title
-        entity.cityName = experience.city.name
-        entity.detailedDesc = experience.description
-        entity.likesNum = Int64(experience.likesNumber)
-        entity.viewsNum = Int64(experience.viewsNumber)
-        entity.isLiked = experience.isLiked
-        entity.coverPhoto = experience.coverPhoto
-        entity.recommended = Int16(experience.recommended)
         entity.isRecent = isRecent
+        entity.populate(with: experience)
     }
     
     private func update(entity: ExperienceEntity, with experience: Experience) {
-        entity.title = experience.title
-        entity.cityName = experience.city.name
-        entity.detailedDesc = experience.description
-        entity.likesNum = Int64(experience.likesNumber)
-        entity.viewsNum = Int64(experience.viewsNumber)
-        entity.isLiked = experience.isLiked
-        entity.coverPhoto = experience.coverPhoto
-        entity.recommended = Int16(experience.recommended)
+        entity.populate(with: experience)
     }
     
     private func mapEntityToExperience(_ entity: ExperienceEntity) -> Experience {
-        return Experience(
-            id: entity.id ?? "",
-            title: entity.title ?? "",
-            coverPhoto: entity.coverPhoto ?? "",
-            description: entity.detailedDesc ?? "",
-            city: Experience.City(name: entity.cityName ?? ""),
-            recommended: Int(entity.recommended),
-            viewsNumber: Int(entity.viewsNum),
-            likesNumber: Int(entity.likesNum),
-            hasAudio: false,
-            audioURL: nil
-        )
+        entity.getExperience()
     }
 }
 
