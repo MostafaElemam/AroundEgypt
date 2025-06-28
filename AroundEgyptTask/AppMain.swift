@@ -9,14 +9,10 @@ import SwiftUI
 
 @main
 struct AppMain: App {
-    @StateObject private var homeVM = HomeViewModel()
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                HomeScreen()
-            }
-            .environmentObject(homeVM)
+            HomeScreen()
         }
     }
 }

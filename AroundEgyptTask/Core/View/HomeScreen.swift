@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeScreen: View {
     
     // MARK: - Properties
-    @EnvironmentObject private var homeVM: HomeViewModel
+    @StateObject private var homeVM = HomeViewModel()
     @State private var selectedExperience: Experience?
     
     
@@ -19,26 +19,31 @@ struct HomeScreen: View {
         VStack(spacing: 0) {
             topBar
             
-            ScrollView(showsIndicators: false) {
+            Group {
                 if homeVM.filteredExperiences.isEmpty {
-                    VStack(alignment: .leading, spacing: 32) {
-                        header
-                        recommendedExperiences
-                        experienceList(data: homeVM.recentExperiences)
+                    ScrollView(showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 32) {
+                            header
+                            recommendedExperiences
+                            recentExperiences
+                        }
                     }
+                    .refreshable { refreshExperiences() }
+                    
                 } else {
-                    experienceList(data: homeVM.filteredExperiences, forRecentExps: false)
+                    ScrollView(showsIndicators: false) {
+                        filteredExperiences
+                    }
                 }
-                
             }
             .safeAreaPadding(20)
-            .refreshable {
-                Task { await homeVM.getRecentExperiences() }
-                Task { await homeVM.getRecommendedExperiences() }
+        }
+        .onAppear {
+            NetworkMonitor.shared.onReconnect =  {
+                Helpers.showBanner(title: "", "📶 Network reconnected.", theme: .success)
+                refreshExperiences()
             }
         }
-        .onAppear(perform: refreshData)
-        .toolbar(.hidden)
         .sheet(item: $selectedExperience) {
             ExperienceScreen(id: $0.id) { likedExperienceID, newCount in
                 homeVM.updateLikedExperiences(id: likedExperienceID, count: newCount)
@@ -60,23 +65,26 @@ extension HomeScreen {
     }
     
     private var recommendedExperiences: some View {
-        VStack(alignment: .leading) {
-            Text("Recommended Experiences")
-                .customFont(.bold, size: 22)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(homeVM.recommendedExperiences, id: \.id) { exp in
-                        ExperienceView(experience: exp, isLoading: homeVM.loadingRecommendedExp)
-                            .frame(width: 340)
-                            .onTapGesture {
-                                if homeVM.loadingRecommendedExp { return }
-                                selectedExperience = exp
-                            }
-                    }
-                }
-            }
-        }
+        ExperiencesList(headerTitle: "Recommended Experiences",
+                        data: homeVM.recommendedExperiences,
+                        shouldShimmer: homeVM.loadingRecommendedExp,
+                        axis: .horizontal,
+                        selectedExperience: $selectedExperience)
+    }
+    
+    private var recentExperiences: some View {
+        ExperiencesList(headerTitle: "Most Recent",
+                        data: homeVM.recentExperiences,
+                        shouldShimmer: homeVM.loadingRecentExp,
+                        axis: .vertical,
+                        selectedExperience: $selectedExperience)
+    }
+    
+    private var filteredExperiences: some View {
+        ExperiencesList(headerTitle: nil,
+                        data: homeVM.filteredExperiences,
+                        axis: .vertical,
+                        selectedExperience: $selectedExperience)
     }
     
     private var topBar: some View {
@@ -95,37 +103,13 @@ extension HomeScreen {
 // MARK: - Functions
 extension HomeScreen {
     
-    //For more recent and searched experiences
-    func experienceList(data: [Experience], forRecentExps: Bool = true) -> some View {
-        VStack(alignment: .leading) {
-            if forRecentExps {
-                Text("Most Recent")
-                    .customFont(.bold, size: 22)
-            }
-            VStack(spacing: 20) {
-                ForEach(data, id: \.id) { exp in
-                    ExperienceView(experience: exp, isLoading: homeVM.loadingRecentExp)
-                        .onTapGesture {
-                            if forRecentExps,homeVM.loadingRecentExp { return }
-                            selectedExperience = exp
-                        }
-                }
-            }
-        }
-    }
-    private func refreshData() {
-        NetworkMonitor.shared.onReconnect =  {
-            Helpers.showBanner(title: "", "📶 Network reconnected.", theme: .success)
-            Task { await homeVM.getRecentExperiences() }
-            Task { await homeVM.getRecommendedExperiences() }
-        }
+    private func refreshExperiences() {
+        Task { await homeVM.getRecentExperiences() }
+        Task { await homeVM.getRecommendedExperiences() }
     }
 }
 // MARK: - Preview
 
 #Preview {
-    NavigationStack {
-        HomeScreen()
-            .environmentObject(HomeViewModel())
-    }
+    HomeScreen()
 }

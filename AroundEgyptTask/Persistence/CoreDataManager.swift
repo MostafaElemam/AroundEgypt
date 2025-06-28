@@ -45,8 +45,10 @@ class CoreDataManager: CoreDataService {
             do {
                 let results = try self.backgroundContext.fetch(request)
                 if let entity = results.first {
+                    //existing Entity
                     self.update(entity: entity, with: exp)
                 } else {
+                    //new Entity
                     self.add(experience: exp, isRecent: isRecent ?? false)
                 }
                 try self.backgroundContext.save()
@@ -61,10 +63,9 @@ class CoreDataManager: CoreDataService {
         request.predicate = NSPredicate(format: "id == %@", id)
         
         do {
-            let result = try container.viewContext.fetch(request).first
-            if let entity = result {
-                return self.mapEntityToExperience(entity)
-            }
+            let entity = try container.viewContext.fetch(request).first
+            return entity?.getExperience()
+            
         } catch {
             print("Fetch by ID error: \(error)")
         }
@@ -77,7 +78,7 @@ class CoreDataManager: CoreDataService {
         
         do {
             let entities = try container.viewContext.fetch(request)
-            return entities.map { self.mapEntityToExperience($0) }
+            return entities.map { $0.getExperience() }
         } catch {
             print("Fetch recent/rec error: \(error)")
             return []
@@ -96,8 +97,5 @@ class CoreDataManager: CoreDataService {
         entity.populate(with: experience)
     }
     
-    private func mapEntityToExperience(_ entity: ExperienceEntity) -> Experience {
-        entity.getExperience()
-    }
 }
 
