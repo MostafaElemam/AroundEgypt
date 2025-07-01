@@ -9,14 +9,15 @@ import SwiftUI
 
 struct ExperiencesList: View {
     // MARK: - Properties
+    
     let headerTitle: String?
     let data: [Experience]?
     var shouldShimmer: Bool = false
     let axis: Axis.Set
     @Binding var selectedExperience: Experience?
     
-    
     // MARK: - View
+    
     var body: some View {
         VStack(alignment: .leading) {
             if let headerTitle {
@@ -56,5 +57,16 @@ extension ExperiencesList {
 // MARK: - Preview
 
 #Preview {
-//    ExperiencesList()
+    let data: [Experience] = [
+        Preview.dev.experience,
+        Preview.dev.experience,
+        Preview.dev.experience
+    ]
+    
+    ExperiencesList(headerTitle: "Most Recent",
+                    data: data,
+                    axis: .vertical,
+                    selectedExperience: .constant(nil))
+    .safeAreaPadding()
+
 }
