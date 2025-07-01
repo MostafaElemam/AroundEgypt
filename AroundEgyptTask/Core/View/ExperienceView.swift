@@ -9,8 +9,8 @@ import SwiftUI
 import Kingfisher
 
 struct ExperienceView: View {
-    let experience: Experience
-    let isLoading: Bool
+    let experience: Experience?
+    let shimmerLabels: Bool
     
     // MARK: - View
     var body: some View {
@@ -37,7 +37,7 @@ struct ExperienceView: View {
 extension ExperienceView {
     
     private var mainImage: some View {
-        KFImage(URL(string: experience.coverPhoto))
+        KFImage(URL(string: experience?.coverPhoto ?? ""))
             .resizable()
             .placeholder {
                 Image(.logo)
@@ -51,7 +51,7 @@ extension ExperienceView {
     }
     private var recommendedLabelAndInfo: some View {
         HStack {
-            if experience.recommended == 1 {
+            if experience?.recommended == 1 {
                 HStack {
                     Image(systemName: "star.fill")
                         .resizable()
@@ -78,7 +78,7 @@ extension ExperienceView {
     }
     private var viewsCounts: some View {
         HStack {
-            Label("\(experience.viewsNumber)", systemImage: "eye.fill")
+            Label("\(experience?.viewsNumber ?? 123)", systemImage: "eye.fill")
                 .customFont(.medium, size: 14)
                 .foregroundColor(.white)
             
@@ -90,14 +90,14 @@ extension ExperienceView {
     
     private var titleAndLikes: some View {
         HStack(spacing: 8) {
-            Text(experience.title)
+            Text(experience?.title ?? "PlaceHolder Title")
                 .customFont(.bold, size: 14)
             Spacer()
-            Text(experience.likesNumber.description)
+            Text(experience?.likesNumber.description ?? "2000")
                 .customFont(.medium, size: 14)
             Image(.heartFilled)
         }
-        .redacted(isLoading)
+        .redacted(shimmerLabels)
         .foregroundStyle(.black)
     }
     
@@ -106,6 +106,6 @@ extension ExperienceView {
 // MARK: - Preview
 
 #Preview {
-    ExperienceView(experience: Preview.dev.experience, isLoading: true)
+    ExperienceView(experience: Preview.dev.experience, shimmerLabels: true)
         .padding(.horizontal, 20)
 }

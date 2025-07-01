@@ -10,8 +10,8 @@ import SwiftUI
 class HomeViewModel: ObservableObject {
     
     // MARK: - Properties
-    @Published var recommendedExperiences: [Experience] = []
-    @Published var recentExperiences: [Experience] = []
+    @Published var recommendedExperiences: [Experience]?
+    @Published var recentExperiences: [Experience]?
     @Published var filteredExperiences: [Experience] = []
     @Published var searchText: String = ""
     @Published var loadingRecommendedExp = true
@@ -35,7 +35,7 @@ class HomeViewModel: ObservableObject {
         //Load offline first
         await MainActor.run {
             let savedExps = coreDataService.getSavedExperiences(forRecent: false)
-            recommendedExperiences = savedExps.isEmpty ? Preview.dev.dummyExperiences(count: 5) : savedExps // dummy data till api returns
+            recommendedExperiences = savedExps.isEmpty ? nil : savedExps
             loadingRecommendedExp = savedExps.isEmpty
         }
         
@@ -55,7 +55,7 @@ class HomeViewModel: ObservableObject {
         //Load offline first
         await MainActor.run {
             let savedExps = coreDataService.getSavedExperiences(forRecent: true)
-            self.recentExperiences = savedExps.isEmpty ? Preview.dev.dummyExperiences(count: 5) : savedExps // dummy data till api returns
+            recentExperiences = savedExps.isEmpty ? nil : savedExps
             loadingRecentExp = savedExps.isEmpty
         }
         
@@ -88,13 +88,13 @@ class HomeViewModel: ObservableObject {
     }
     
     func updateLikedExperiences(id: String, count: Int) {
-        if let index = recentExperiences.firstIndex(where: { $0.id == id }) {
-            recentExperiences[index].likesNumber = count
-            recentExperiences[index].isLiked = true
+        if let index = recentExperiences?.firstIndex(where: { $0.id == id }) {
+            recentExperiences?[index].likesNumber = count
+            recentExperiences?[index].isLiked = true
         }
-        if let index = recommendedExperiences.firstIndex(where: { $0.id == id }) {
-            recommendedExperiences[index].likesNumber = count
-            recommendedExperiences[index].isLiked = true
+        if let index = recommendedExperiences?.firstIndex(where: { $0.id == id }) {
+            recommendedExperiences?[index].likesNumber = count
+            recommendedExperiences?[index].isLiked = true
         }
         if let index = filteredExperiences.firstIndex(where: { $0.id == id }) {
             filteredExperiences[index].likesNumber = count
